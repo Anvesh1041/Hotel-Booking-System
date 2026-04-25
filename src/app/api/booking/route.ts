@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getBookingByUserId } from '@/db/queries/booking';
+import { deleteBookingById, getBookingByUserId } from '@/db/queries/booking';
 import { createBooking } from '@/services/booking.service';
 
 export async function GET(req: Request) {
@@ -37,6 +37,32 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { success: false, message: e.message },
       { status: 400 }
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const booking_id = Number(searchParams.get("booking_id"));
+    if (!booking_id) {
+      return NextResponse.json(
+        { success: false, message: "booking_id required" },
+        { status: 400 }
+      );
+    }
+    const result = await deleteBookingById(booking_id);
+    if (result.rowCount === 0) {
+      return NextResponse.json(
+        { success: false, message: "Booking not found" },
+        { status: 404 }
+      );
+    }
+    return NextResponse.json({ success: true, message: "Booking deleted successfully", booking_id });
+  } catch (e: any) {
+    return NextResponse.json(
+      { success: false, message: "something went wrong" },
+      { status: 500 }
     );
   }
 }

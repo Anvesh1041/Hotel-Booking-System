@@ -23,3 +23,7 @@ export async function getAllBookings(){
 export async function getBookingByRoomId(room_id:number){
     return await db.select().from(booking).where(eq(booking.roomId,room_id))
 }
+
+export async function deleteBookingById(booking_id:number){
+    return await db.delete(booking).where(eq(booking.id, booking_id))
+}
