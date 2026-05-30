@@ -14,7 +14,7 @@ function isRoomAvailable(roomBookings: any[], check_in: Date, check_out: Date) {
 }
 
 
-export async function availableRooms(check_in: Date, check_out: Date) {
+export async function availableRooms(check_in: Date, check_out: Date, capacity?: number, max_price?: number) {
     const rooms = await getAllRooms();
     const bookings = await getAllBookings();
 
@@ -28,7 +28,7 @@ export async function availableRooms(check_in: Date, check_out: Date) {
         bookingMap.get(b.roomId)!.push(b);
     }
 
-    const result = [];
+    let result = [];
 
 
     for (const room of rooms) {
@@ -38,29 +38,38 @@ export async function availableRooms(check_in: Date, check_out: Date) {
             result.push(room);
         }
     }
+    console.log(capacity, max_price)
+    if (capacity) {
+        console.log("capacity:", capacity);
 
+        result = result.filter(room => room.capacity >= Number(capacity));
+    }
+
+    if (max_price) {
+        result = result.filter(room => room.price <= Number(max_price));
+    }
 
     return result;
 }
 
 export async function checkAvailability(roomId: number, check_in: Date, check_out: Date) {
-  const bookings = await getBookingByRoomId(roomId);
+    const bookings = await getBookingByRoomId(roomId);
 
-  return isRoomAvailable(bookings, check_in, check_out);
+    return isRoomAvailable(bookings, check_in, check_out);
 }
 
-export async function createBooking(data:any) {
-  const { user_id, room_id, checkInDate, checkOutDate } = data;
+export async function createBooking(data: any) {
+    const { user_id, room_id, checkInDate, checkOutDate } = data;
 
-  if (checkInDate >= checkOutDate) {
-    throw new Error("Invalid date selection");
-  }
+    if (checkInDate >= checkOutDate) {
+        throw new Error("Invalid date selection");
+    }
 
-  const available = await checkAvailability(room_id, checkInDate, checkOutDate);
+    const available = await checkAvailability(room_id, checkInDate, checkOutDate);
 
-  if (!available) {
-    throw new Error("Room not available");
-  }
+    if (!available) {
+        throw new Error("Room not available");
+    }
 
-  return await book(user_id, room_id, checkInDate, checkOutDate);
+    return await book(user_id, room_id, checkInDate, checkOutDate);
 }

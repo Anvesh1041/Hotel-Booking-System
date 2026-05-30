@@ -5,6 +5,8 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const check_in = searchParams.get("check_in");
     const check_out = searchParams.get("check_out");
+    const capacity = searchParams.get("capacity");
+    const max_price = searchParams.get("max_price");
 
     if (!check_in || !check_out) {
         return NextResponse.json(
@@ -23,7 +25,7 @@ export async function GET(req: Request) {
         );
     }
 
-    const availableRoomsList = await availableRooms(checkInDate, checkOutDate);
+    const availableRoomsList = await availableRooms(checkInDate, checkOutDate, capacity ? parseInt(capacity) : undefined, max_price ? parseInt(max_price) : undefined);
 
     return NextResponse.json({ success: true, rooms: availableRoomsList });
 }
