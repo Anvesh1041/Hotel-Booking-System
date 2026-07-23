@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllUsers,createUser } from "@/db/queries/users";
+import { getAllUsers,createUser,deleteUserById } from "@/db/queries/users";
 
 export async function GET(){
   try {
@@ -35,5 +35,27 @@ export async function POST(req: Request) {
       { success: false, error: err },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const {searchParams} = new URL(req.url)
+    const user_id = Number(searchParams.get("user_id"))
+
+    if (!user_id) {
+      return NextResponse.json(
+        { success: false, message:"user_id required"},
+        { status: 400 }
+      )
+    }
+    const result = await deleteUserById(user_id)
+    return NextResponse.json({ success: true, data: result });
+  }
+  catch (err) {
+    return NextResponse.json(
+      { success: false, error:err},
+      { status: 500 }
+    )
   }
 }

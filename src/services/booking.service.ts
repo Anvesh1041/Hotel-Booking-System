@@ -50,7 +50,7 @@ export async function availableRooms(check_in: Date, check_out: Date, capacity?:
     }
 
     return result;
-}
+}// http://localhost:3000/api/available?check_in=2026-04-30&check_out=2026-05-05&capacity=2&max_price=2000
 
 export async function checkAvailability(roomId: number, check_in: Date, check_out: Date) {
     const bookings = await getBookingByRoomId(roomId);

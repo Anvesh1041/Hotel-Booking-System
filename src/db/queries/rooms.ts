@@ -17,3 +17,7 @@ export async function createRoom(name: string, price: number, capacity: number) 
         capacity,
     })
 }
+
+export async function deleteRoomById(room_id: number) {
+    return await db.delete(rooms).where(eq(rooms.id, room_id))
+}

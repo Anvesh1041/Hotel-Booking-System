@@ -1,11 +1,18 @@
 import { NextResponse } from 'next/server';
 import { deleteBookingById, getBookingByUserId } from '@/db/queries/booking';
 import { createBooking } from '@/services/booking.service';
+import { isPositiveInteger } from '@/utils/validators';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const user_id = Number(searchParams.get("user_id"));
 
+  if (!isPositiveInteger(user_id)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid user id"},
+        { status: 400 }
+      )
+  }
   if (!user_id) {
     return NextResponse.json(
       { success: false, message: "user_id required" },
@@ -50,6 +57,12 @@ export async function DELETE(req: Request) {
         { success: false, message: "booking_id required" },
         { status: 400 }
       );
+    }
+    if (!isPositiveInteger(booking_id)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid booking id"},
+        { status: 400 }
+      )
     }
     const result = await deleteBookingById(booking_id);
     if (result.rowCount === 0) {
