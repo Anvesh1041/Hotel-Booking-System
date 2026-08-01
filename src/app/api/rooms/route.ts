@@ -18,16 +18,16 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const { name, price, capacity } = body;
+        const { room_no, type, price, capacity, description } = body;
 
-        if (!name || !price || !capacity) {
+        if (!room_no || !type || !price || !capacity || !description) {
             return NextResponse.json(
                 { success: false, message: "Missing fields" },
                 { status: 400 }
             );
         }
 
-        await createRoom(name, price, capacity);
+        await createRoom(room_no, type, price, capacity, description);
 
         return NextResponse.json({ success: true });
         

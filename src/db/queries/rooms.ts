@@ -10,11 +10,13 @@ export async function getRoomById(id: number) {
     return await db.select().from(rooms).where(eq(rooms.id, id))
 }
 
-export async function createRoom(name: string, price: number, capacity: number) {
+export async function createRoom(room_no: number,type: string, price: number, capacity: number, description: string) {
     return await db.insert(rooms).values({
-        name,
+        roomNo: room_no,
+        type,
         price,
         capacity,
+        description
     })
 }
 

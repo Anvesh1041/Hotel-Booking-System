@@ -29,6 +29,13 @@
       "when": 1776611816444,
       "tag": "0003_opposite_cable",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1785426042601,
+      "tag": "0004_lowly_cobalt_man",
+      "breakpoints": true
     }
   ]
 }

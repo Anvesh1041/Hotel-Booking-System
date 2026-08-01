@@ -8,9 +8,11 @@ export const users = pgTable("users", {
 
 export const rooms = pgTable("rooms",{
   id: serial("id").primaryKey(),
-  name: text("name").notNull(),
+  roomNo: integer("room_no").notNull().unique(),
+  type: text("type").notNull(),
   price: integer("price").notNull(),
   capacity: integer("capacity").notNull(),
+  description: text("description").notNull()
 })
 
 export const booking = pgTable("bookings",{

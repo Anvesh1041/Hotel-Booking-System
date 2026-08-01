@@ -13,8 +13,7 @@ function isRoomAvailable(roomBookings: any[], check_in: Date, check_out: Date) {
     return true;
 }
 
-
-export async function availableRooms(check_in: Date, check_out: Date, capacity?: number, max_price?: number) {
+export async function availableRooms(check_in: Date, check_out: Date, room_type?:string, capacity?: number, max_price?: number) {
     const rooms = await getAllRooms();
     const bookings = await getAllBookings();
 
@@ -38,7 +37,7 @@ export async function availableRooms(check_in: Date, check_out: Date, capacity?:
             result.push(room);
         }
     }
-    console.log(capacity, max_price)
+    // console.log(capacity, max_price)
     if (capacity) {
         console.log("capacity:", capacity);
 
@@ -47,6 +46,15 @@ export async function availableRooms(check_in: Date, check_out: Date, capacity?:
 
     if (max_price) {
         result = result.filter(room => room.price <= Number(max_price));
+    }
+    console.log("Requested room_type:", room_type);
+console.log("Available rooms before type filter:", result);
+
+for (const room of result) {
+    console.log("DB type:", room.type);
+}
+    if (room_type) {
+        result = result.filter(room => room.type === String(room_type));
     }
 
     return result;
