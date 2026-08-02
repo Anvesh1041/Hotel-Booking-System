@@ -12,9 +12,9 @@ export async function GET(req: Request) {
                 { status: 400 }
             );
         }
-        if (!isPositiveInteger(room_id)) {
+        if (!isPositiveInteger(room_id).success) {
             return NextResponse.json(
-                { success: false, message: "Invalid room id" },
+                isPositiveInteger(room_id),
                 { status: 400 }
             )
         }

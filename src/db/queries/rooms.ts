@@ -20,6 +20,13 @@ export async function createRoom(room_no: number,type: string, price: number, ca
     })
 }
 
+export async function updateRoomById(
+    room_id: number,
+    updates: Partial<typeof rooms.$inferInsert>
+) {
+    return await db.update(rooms).set(updates).where(eq(rooms.id, room_id))
+}
+
 export async function deleteRoomById(room_id: number) {
     return await db.delete(rooms).where(eq(rooms.id, room_id))
 }

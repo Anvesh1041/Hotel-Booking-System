@@ -7,9 +7,9 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const user_id = Number(searchParams.get("user_id"));
 
-  if (!isPositiveInteger(user_id)) {
+  if (!isPositiveInteger(user_id).success) {
       return NextResponse.json(
-        { success: false, message: "Invalid user id"},
+        isPositiveInteger(user_id),
         { status: 400 }
       )
   }
@@ -58,9 +58,9 @@ export async function DELETE(req: Request) {
         { status: 400 }
       );
     }
-    if (!isPositiveInteger(booking_id)) {
+    if (!isPositiveInteger(booking_id).success) {
       return NextResponse.json(
-        { success: false, message: "Invalid booking id"},
+        isPositiveInteger(booking_id),
         { status: 400 }
       )
     }
