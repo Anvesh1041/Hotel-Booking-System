@@ -15,6 +15,13 @@ export const rooms = pgTable("rooms",{
   description: text("description").notNull()
 })
 
+export const roomImages = pgTable("room_images", {
+  id: serial("id").primaryKey(),
+  roomId: integer("room_id").notNull().references(()=>rooms.id),
+  imgUrl: text("img_url").notNull(),
+  publicId: text("public_id").notNull()
+})
+
 export const booking = pgTable("bookings",{
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(()=>users.id),

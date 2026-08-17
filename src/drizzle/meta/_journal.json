@@ -36,6 +36,13 @@
       "when": 1785426042601,
       "tag": "0004_lowly_cobalt_man",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1786987499332,
+      "tag": "0005_green_punisher",
+      "breakpoints": true
     }
   ]
 }

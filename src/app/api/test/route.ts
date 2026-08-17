@@ -1,13 +1,21 @@
-import { db } from "@/db";
-import { sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
+import cloudinary from "@/lib/cloudinary";
 
 export async function GET() {
-  try {
-    console.log(process.env.DATABASE_URL);
-    const result = await db.execute(sql`SELECT 1`);
-    return NextResponse.json({ success: true, result });
-  } catch (e) {
-    return NextResponse.json({ success: false, error: e });
-  }
+    try {
+        const result = await cloudinary.api.ping();
+
+        return NextResponse.json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        return NextResponse.json(
+            {
+                success: false,
+                error: "Cloudinary connection failed"
+            },
+            { status: 500 }
+        );
+    }
 }
