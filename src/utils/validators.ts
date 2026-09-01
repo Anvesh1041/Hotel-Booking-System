@@ -39,3 +39,65 @@ export function isValidImage(file: FormDataEntryValue | null): ImageValidationRe
         file: file
     };
 }
+
+
+type BookingValidationResult =
+    | {
+        success: true;
+        data: {
+            user_id: number;
+            room_id: number;
+            checkInDate: Date;
+            checkOutDate: Date;
+        };
+    }
+    | {
+        success: false;
+        message: string;
+    };
+
+export function isValidBooking(data: any):BookingValidationResult {
+    if (
+        !data ||
+        typeof data !== "object" ||
+        !isPositiveInteger(data.user_id).success ||
+        !isPositiveInteger(data.room_id).success ||
+        typeof data.check_in !== "string" ||
+        typeof data.check_out !== "string"
+    ) {
+        return {
+            success: false,
+            message: "Invalid booking data"
+        };
+    }
+
+    const checkInDate = new Date(data.check_in);
+    const checkOutDate = new Date(data.check_out);
+
+    if (
+        Number.isNaN(checkInDate.getTime()) ||
+        Number.isNaN(checkOutDate.getTime())
+    ) {
+        return {
+            success: false,
+            message: "Invalid date format"
+        };
+    }
+
+    if (checkInDate >= checkOutDate) {
+        return {
+            success: false,
+            message: "Invalid date selection"
+        };
+    }
+
+    return {
+        success: true,
+        data: {
+            user_id: data.user_id,
+            room_id: data.room_id,
+            checkInDate,
+            checkOutDate
+        }
+    };
+}

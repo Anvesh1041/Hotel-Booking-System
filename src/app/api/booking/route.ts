@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { deleteBookingById, getBookingByUserId } from '@/db/queries/booking';
 import { createBooking } from '@/services/booking.service';
-import { isPositiveInteger } from '@/utils/validators';
+import { isPositiveInteger, isValidBooking } from '@/utils/validators';
+import { getUserById } from '@/db/queries/users';
+import { getRoomById } from '@/db/queries/rooms';
+import { AppError } from '@/utils/errors';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -12,12 +15,6 @@ export async function GET(req: Request) {
         isPositiveInteger(user_id),
         { status: 400 }
       )
-  }
-  if (!user_id) {
-    return NextResponse.json(
-      { success: false, message: "user_id required" },
-      { status: 400 }
-    );
   }
 
   const bookings = await getBookingByUserId(user_id);
@@ -35,15 +32,51 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const validation = isValidBooking(body)
 
-    const result = await createBooking({...body, checkInDate: new Date(body.check_in), checkOutDate: new Date(body.check_out)});
-
+    if (!validation.success){
+      return NextResponse.json(
+        validation,
+        { status: 400 }
+      )
+    }
+    const {user_id, room_id}= validation.data
+    const user= await getUserById(user_id)
+    const room= await getRoomById(room_id)
+    if(user.length===0){
+      return NextResponse.json(
+        {
+          success:false,
+          message: "User doesn't exists."
+        },
+        { status: 404 }
+      )
+    }
+    if(room.length===0){
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Room doesn't exists."
+        },
+        { status: 404 }
+      )
+    }
+    const result = await createBooking(validation.data)
     return NextResponse.json({ success: true, data: result });
 
   } catch (e: any) {
+    if (e instanceof AppError) {
+        return NextResponse.json(
+            {
+                success: false,
+                message: e.message
+            },
+            { status: e.statusCode }
+        );
+    }
     return NextResponse.json(
-      { success: false, message: e.message },
-      { status: 400 }
+      { success: false, message: "Internal server error" },
+      { status: 500 }
     );
   }
 }

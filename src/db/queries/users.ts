@@ -6,6 +6,9 @@ export async function getAllUsers() {
     return await db.select().from(users)
 }
 
+export async function getUserById(user_id:number){
+    return await db.select().from(users).where(eq(users.id, user_id))
+}
 export async function createUser(name: string, email: string) {
     return await db.insert(users).values({
         name,
