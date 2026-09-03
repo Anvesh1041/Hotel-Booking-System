@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAllUsers,createUser,deleteUserById } from "@/db/queries/users";
+import { isValidUser } from "@/utils/validators";
+import { hashPassword } from "@/services/password.service";
 
 export async function GET(){
   try {
@@ -18,19 +20,28 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const { name, email } = body;
+    const validation= isValidUser(body)
 
-    if (!name || !email) {
+    if (!validation.success) {
       return NextResponse.json(
-        { success: false, message: "Missing fields" },
+        validation,
         { status: 400 }
       );
     }
-
-    await createUser(name, email);
-
-    return NextResponse.json({ success: true });
-  } catch (err) {
+    const { name, email, password }= validation.data
+    const passwordHash= await hashPassword(password)
+    await createUser(name,email,passwordHash)
+    return NextResponse.json({ success: true, message: "User created successfully" });
+  } catch (err:any) {
+    if (err?.cause?.code === "23505") {
+        return NextResponse.json(
+            {
+                success: false,
+                message: "Email already exists"
+            },
+            { status: 409 }
+        );
+    }
     return NextResponse.json(
       { success: false, error: err },
       { status: 500 }

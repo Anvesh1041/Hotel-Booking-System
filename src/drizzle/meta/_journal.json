@@ -43,6 +43,13 @@
       "when": 1786987499332,
       "tag": "0005_green_punisher",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788368447309,
+      "tag": "0006_misty_bishop",
+      "breakpoints": true
     }
   ]
 }
